@@ -1,11 +1,12 @@
 #include "Brick.h"
 
-Brick::Brick(float startX, float startY, float brickWidth, float brickHeight) {
+Brick::Brick(float startX, float startY, float brickWidth, float brickHeight, Color color) {
     x = startX;
     y = startY;
     width = brickWidth;
     height = brickHeight;
     isDestroyed = false;
+    brickColor = color;
 }
 
 float Brick::getX() const {
@@ -30,4 +31,8 @@ bool Brick::destroyed() const {
 
 void Brick::destroy() {
     isDestroyed = true;
+}
+
+Color Brick::getColor() {
+    return brickColor;
 }

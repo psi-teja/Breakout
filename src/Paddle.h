@@ -14,8 +14,9 @@ public:
     float getY() const;
     float getWidth() const;
     float getHeight() const;
-    void draw() const;
+    void draw();
     void reset(float startX, float startY);
+    float previousX;
 };
 
 #endif // !PADDLE_H

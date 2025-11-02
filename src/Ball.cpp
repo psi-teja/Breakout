@@ -29,7 +29,7 @@ float Ball::getRadius() const {
 
 void Ball::draw() const {
     // Drawing logic would go here, e.g., using a graphics library
-    DrawCircle(static_cast<int>(x), static_cast<int>(y), radius, RED);
+    DrawCircle(static_cast<int>(x), static_cast<int>(y), radius, BLACK);
 }
 
 void Ball::reset(float newX, float newY) {
