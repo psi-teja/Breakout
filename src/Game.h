@@ -13,12 +13,19 @@ private:
     Paddle paddle;
     Ball ball;
     std::vector<Brick> bricks;
+    enum GameState {
+        PLAYING,
+        GAME_OVER
+    };
+    GameState currentState;
+    void reset();
 
 public :
     Game();
     void run();
-
-
+    void render();
+    void update();
+    void checkCollisions();
 };
 
 #endif // !GAME_H

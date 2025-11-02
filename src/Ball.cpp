@@ -1,4 +1,5 @@
 #include "Ball.h"
+#include "raylib.h"
 
 Ball::Ball(float startX, float startY, float ballRadius, float ballSpeedX, float ballSpeedY) {
     x = startX;
@@ -11,6 +12,7 @@ Ball::Ball(float startX, float startY, float ballRadius, float ballSpeedX, float
 void Ball::move() {
     x += speedX;
     y += speedY;
+
 }
 
 float Ball::getX() const {
@@ -23,4 +25,24 @@ float Ball::getY() const {
 
 float Ball::getRadius() const {
     return radius;
+}
+
+void Ball::draw() const {
+    // Drawing logic would go here, e.g., using a graphics library
+    DrawCircle(static_cast<int>(x), static_cast<int>(y), radius, RED);
+}
+
+void Ball::reset(float newX, float newY) {
+    x = newX;
+    y = newY;
+    speedX = 0;
+    speedY = 1.0f;
+}
+
+void Ball::reverseX() {
+    speedX = -speedX;
+}
+
+void Ball::reverseY() {
+    speedY = -speedY;
 }
