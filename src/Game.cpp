@@ -6,37 +6,34 @@ void Game::run()
 {
     // Main game loop implementation
     InitWindow(ScreenWidth, ScreenHeight, "Breakout");
-
     while (!WindowShouldClose())
     {
         render();
         update();
     }
-
     CloseWindow();
 }
 
-Game::Game() : paddle(350.0f, 550.0f, 100.0f, 20.0f, 10.0f), ball(400.0f, 300.0f, 10.0f, 0, 1.0f), currentState(PLAYING)
+Game::Game() : paddle(350.0f, 550.0f, 100.0f, 20.0f, 10.0f), ball(400.0f, 400.0f, 10.0f, 0, 1.0f), currentState(PLAYING)
 {
     // Initialize other game components if necessary
     // Initialize bricks layout
     bricks.clear();
-    const int rows = 5;
+    const int rows = 15;
     const int cols = 10;
     const float spacing = 3.0f;
 
     ScreenWidth = 800;
     ScreenHeight = 600;
 
-
     const float brickWidth = (ScreenWidth - spacing * (cols - 1)) / cols;
-    const float brickHeight = (ScreenHeight / 3 - spacing * (rows - 1)) / rows;
+    const float brickHeight = (ScreenHeight / 2 - spacing * (rows - 1)) / rows;
 
     std::cout << "Screen Width: " << GetScreenWidth() << ", Screen Height: " << GetScreenHeight() << std::endl;
     std::cout << "Brick Width: " << brickWidth << ", Brick Height: " << brickHeight << std::endl;
 
     // Optional per-row colors (requires Brick to support a color setter)
-    Color rowColors[rows] = {RED, ORANGE, YELLOW, GREEN, BLUE};
+    Color rowColors[rows] = {RED, ORANGE, YELLOW, GREEN, BLUE, PURPLE, MAROON, BROWN, GRAY, DARKGRAY, LIGHTGRAY, SKYBLUE, LIME, PINK, VIOLET};
 
     for (int r = 0; r < rows; ++r)
     {
@@ -103,6 +100,9 @@ void Game::update()
 
 void Game::checkCollisions()
 {
+
+    const float collisionBuffer = 0.1f;
+
     // Collision detection and handling logic would go here
     if (ball.getY() + ball.getRadius() >= paddle.getY() &&
         ball.getX() >= paddle.getX() &&
@@ -140,7 +140,10 @@ void Game::checkCollisions()
                 ball.getY() - ball.getRadius() <= brick.getY() + brick.getHeight())
             {
                 brick.destroy();
-                ball.reverseY();
+                if (ball.getY() < brick.getY() || ball.getY() > brick.getY() + brick.getHeight())
+                    ball.reverseY();
+                else
+                    ball.reverseX();
                 break; // Only handle one brick collision per update
             }
         }
