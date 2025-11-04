@@ -21,6 +21,7 @@ public:
     void reset(float newX, float newY);
     void draw() const;
     void setSpeedX(float newSpeedX) { speedX = newSpeedX; }
+    void setY(float newY) { y = newY; }
 };  
 
 #endif // !BALL_H

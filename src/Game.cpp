@@ -1,6 +1,7 @@
 #include "Game.h"
 #include <iostream>
 #include "raylib.h"
+#include <cmath> // For std::abs in collision detection
 
 void Game::run()
 {
@@ -25,6 +26,9 @@ Game::Game() : paddle(350.0f, 550.0f, 100.0f, 20.0f, 10.0f), ball(400.0f, 400.0f
 
     ScreenWidth = 800;
     ScreenHeight = 600;
+
+    paddle.reset(ScreenWidth / 2.0f - paddle.getWidth() / 2.0f, ScreenHeight - 50.0f);
+    ball.reset(ScreenWidth / 2.0f, ScreenHeight / 1.2f);
 
     const float brickWidth = (ScreenWidth - spacing * (cols - 1)) / cols;
     const float brickHeight = (ScreenHeight / 2 - spacing * (rows - 1)) / rows;
@@ -100,50 +104,70 @@ void Game::update()
 
 void Game::checkCollisions()
 {
+    // Use raylib's built-in circle-rectangle collision check for accuracy
+    Rectangle paddleRect = {paddle.getX(), paddle.getY(), paddle.getWidth(), paddle.getHeight()};
+    Vector2 ballCenter = {ball.getX(), ball.getY()};
 
-    const float collisionBuffer = 0.1f;
-
-    // Collision detection and handling logic would go here
-    if (ball.getY() + ball.getRadius() >= paddle.getY() &&
-        ball.getX() >= paddle.getX() &&
-        ball.getX() <= paddle.getX() + paddle.getWidth())
+    // --- Paddle Collision ---
+    if (CheckCollisionCircleRec(ballCenter, ball.getRadius(), paddleRect))
     {
+        // Move ball out of paddle to prevent sticking
+        // We assume the ball is coming from above
+        ball.setY(paddle.getY() - ball.getRadius());
+
+        // Calculate hit position on paddle (-1 for left edge, 0 for center, 1 for right edge)
+        float hitX = (ball.getX() - (paddle.getX() + paddle.getWidth() / 2.0f));
+        float influence = hitX / (paddle.getWidth() / 2.0f);
+
+        // Adjust ball's horizontal speed based on where it hit the paddle
+        // This adds "spin" or control over the ball's direction
+        ball.setSpeedX(influence * 5.0f); // The '5.0f' is a sensitivity factor you can tune
+
+        // Reverse vertical direction
         ball.reverseY();
-        ball.setSpeedX(paddle.getX() - paddle.previousX);
     }
 
+    // --- Wall Collisions ---
+    // Top wall
     if (ball.getY() - ball.getRadius() <= 0)
     {
         ball.reverseY();
     }
+    // Bottom wall - Game Over
     else if (ball.getY() + ball.getRadius() >= GetScreenHeight())
     {
         currentState = GAME_OVER;
     }
 
+    // Left and right walls
     if (ball.getX() - ball.getRadius() <= 0 || ball.getX() + ball.getRadius() >= GetScreenWidth())
     {
         ball.reverseX();
     }
-    else if (ball.getX() + ball.getRadius() >= GetScreenWidth())
-    {
-        ball.reverseX();
-    }
 
+    // --- Brick Collisions ---
     for (auto &brick : bricks)
     {
         if (!brick.destroyed())
         {
-            if (ball.getX() + ball.getRadius() >= brick.getX() &&
-                ball.getX() - ball.getRadius() <= brick.getX() + brick.getWidth() &&
-                ball.getY() + ball.getRadius() >= brick.getY() &&
-                ball.getY() - ball.getRadius() <= brick.getY() + brick.getHeight())
+            Rectangle brickRect = {brick.getX(), brick.getY(), brick.getWidth(), brick.getHeight()};
+            if (CheckCollisionCircleRec(ballCenter, ball.getRadius(), brickRect))
             {
                 brick.destroy();
-                if (ball.getY() < brick.getY() || ball.getY() > brick.getY() + brick.getHeight())
-                    ball.reverseY();
-                else
+
+                // Improved bounce logic: Determine if the collision is more horizontal or vertical.
+                // We calculate the overlap on each axis and bounce on the axis with the smallest overlap.
+                float overlapX = (ball.getRadius() + brick.getWidth() / 2.0f) - std::abs(ball.getX() - (brick.getX() + brick.getWidth() / 2.0f));
+                float overlapY = (ball.getRadius() + brick.getHeight() / 2.0f) - std::abs(ball.getY() - (brick.getY() + brick.getHeight() / 2.0f));
+
+                if (overlapX < overlapY)
+                {
                     ball.reverseX();
+                }
+                else
+                {
+                    ball.reverseY();
+                }
                 break; // Only handle one brick collision per update
             }
         }
@@ -152,7 +176,7 @@ void Game::checkCollisions()
 
 void Game::reset()
 {
-    paddle.reset(350.0f, 550.0f);
-    ball.reset(400.0f, 300.0f);
+    paddle.reset(ScreenWidth / 2.0f - paddle.getWidth() / 2.0f, ScreenHeight - 50.0f);
+    ball.reset(ScreenWidth / 2.0f, ScreenHeight / 1.2f);
     currentState = PLAYING;
 }

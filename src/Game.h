@@ -22,10 +22,8 @@ private:
 
 public :
     Game();
-
     float ScreenWidth;
     float ScreenHeight;
-
     void run();
     void render();
     void update();
