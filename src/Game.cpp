@@ -7,6 +7,7 @@ void Game::run()
 {
     // Main game loop implementation
     InitWindow(ScreenWidth, ScreenHeight, "Breakout");
+    SetTargetFPS(120); // Set our game to run at 120 frames-per-second
     while (!WindowShouldClose())
     {
         render();
