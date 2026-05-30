@@ -15,10 +15,12 @@ private:
     std::vector<Brick> bricks;
     enum GameState {
         PLAYING,
-        GAME_OVER
+        GAME_OVER,
+        WIN
     };
     GameState currentState;
     void reset();
+    void initBricks();
 
 public :
     Game();

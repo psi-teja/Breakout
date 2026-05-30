@@ -45,9 +45,7 @@ float Paddle::getHeight() const {
     return height;
 }
 
-void Paddle::draw() {
-    // Drawing logic would go here, e.g., using a graphics library
-    previousX = x;
+void Paddle::draw() const {
     DrawRectangle(x, y, width, height, BLACK);
 }
 

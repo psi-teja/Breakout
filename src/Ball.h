@@ -18,7 +18,7 @@ public:
     float getRadius() const;
     void reverseX();
     void reverseY();
-    void reset(float newX, float newY);
+    void reset(float newX, float newY, float newSpeedX = 0.0f, float newSpeedY = 5.0f);
     void draw() const;
     void setSpeedX(float newSpeedX) { speedX = newSpeedX; }
     void setY(float newY) { y = newY; }

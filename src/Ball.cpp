@@ -32,11 +32,11 @@ void Ball::draw() const {
     DrawCircle(static_cast<int>(x), static_cast<int>(y), radius, BLACK);
 }
 
-void Ball::reset(float newX, float newY) {
+void Ball::reset(float newX, float newY, float newSpeedX, float newSpeedY) {
     x = newX;
     y = newY;
-    speedX = 0;
-    speedY = 1.0f;
+    speedX = newSpeedX;
+    speedY = newSpeedY;
 }
 
 void Ball::reverseX() {
